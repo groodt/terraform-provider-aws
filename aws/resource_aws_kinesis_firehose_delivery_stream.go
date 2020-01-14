@@ -789,263 +789,263 @@ func resourceAwsKinesisFirehoseDeliveryStream() *schema.Resource {
 							Default:  "UNCOMPRESSED",
 						},
 
-						"data_format_conversion_configuration": {
-							Type:     schema.TypeList,
-							Optional: true,
-							MaxItems: 1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"enabled": {
-										Type:     schema.TypeBool,
-										Optional: true,
-										Default:  true,
-									},
-									"input_format_configuration": {
-										Type:     schema.TypeList,
-										Required: true,
-										MaxItems: 1,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"deserializer": {
-													Type:     schema.TypeList,
-													Required: true,
-													MaxItems: 1,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"hive_json_ser_de": {
-																Type:          schema.TypeList,
-																Optional:      true,
-																MaxItems:      1,
-																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.input_format_configuration.0.deserializer.0.open_x_json_ser_de"},
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"timestamp_formats": {
-																			Type:     schema.TypeList,
-																			Optional: true,
-																			Elem:     &schema.Schema{Type: schema.TypeString},
-																		},
-																	},
-																},
-															},
-															"open_x_json_ser_de": {
-																Type:          schema.TypeList,
-																Optional:      true,
-																MaxItems:      1,
-																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.input_format_configuration.0.deserializer.0.hive_json_ser_de"},
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"case_insensitive": {
-																			Type:     schema.TypeBool,
-																			Optional: true,
-																			Default:  true,
-																		},
-																		"column_to_json_key_mappings": {
-																			Type:     schema.TypeMap,
-																			Optional: true,
-																			Elem:     &schema.Schema{Type: schema.TypeString},
-																		},
-																		"convert_dots_in_json_keys_to_underscores": {
-																			Type:     schema.TypeBool,
-																			Optional: true,
-																			Default:  false,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-									"output_format_configuration": {
-										Type:     schema.TypeList,
-										Required: true,
-										MaxItems: 1,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"serializer": {
-													Type:     schema.TypeList,
-													Required: true,
-													MaxItems: 1,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"orc_ser_de": {
-																Type:          schema.TypeList,
-																Optional:      true,
-																MaxItems:      1,
-																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.output_format_configuration.0.serializer.0.parquet_ser_de"},
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"block_size_bytes": {
-																			Type:     schema.TypeInt,
-																			Optional: true,
-																			// 256 MiB
-																			Default: 268435456,
-																			// 64 MiB
-																			ValidateFunc: validation.IntAtLeast(67108864),
-																		},
-																		"bloom_filter_columns": {
-																			Type:     schema.TypeList,
-																			Optional: true,
-																			Elem:     &schema.Schema{Type: schema.TypeString},
-																		},
-																		"bloom_filter_false_positive_probability": {
-																			Type:     schema.TypeFloat,
-																			Optional: true,
-																			Default:  0.05,
-																		},
-																		"compression": {
-																			Type:     schema.TypeString,
-																			Optional: true,
-																			Default:  firehose.OrcCompressionSnappy,
-																			ValidateFunc: validation.StringInSlice([]string{
-																				firehose.OrcCompressionNone,
-																				firehose.OrcCompressionSnappy,
-																				firehose.OrcCompressionZlib,
-																			}, false),
-																		},
-																		"dictionary_key_threshold": {
-																			Type:     schema.TypeFloat,
-																			Optional: true,
-																			Default:  0.0,
-																		},
-																		"enable_padding": {
-																			Type:     schema.TypeBool,
-																			Optional: true,
-																			Default:  false,
-																		},
-																		"format_version": {
-																			Type:     schema.TypeString,
-																			Optional: true,
-																			Default:  firehose.OrcFormatVersionV012,
-																			ValidateFunc: validation.StringInSlice([]string{
-																				firehose.OrcFormatVersionV011,
-																				firehose.OrcFormatVersionV012,
-																			}, false),
-																		},
-																		"padding_tolerance": {
-																			Type:     schema.TypeFloat,
-																			Optional: true,
-																			Default:  0.05,
-																		},
-																		"row_index_stride": {
-																			Type:         schema.TypeInt,
-																			Optional:     true,
-																			Default:      10000,
-																			ValidateFunc: validation.IntAtLeast(1000),
-																		},
-																		"stripe_size_bytes": {
-																			Type:     schema.TypeInt,
-																			Optional: true,
-																			// 64 MiB
-																			Default: 67108864,
-																			// 8 MiB
-																			ValidateFunc: validation.IntAtLeast(8388608),
-																		},
-																	},
-																},
-															},
-															"parquet_ser_de": {
-																Type:          schema.TypeList,
-																Optional:      true,
-																MaxItems:      1,
-																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.output_format_configuration.0.serializer.0.orc_ser_de"},
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"block_size_bytes": {
-																			Type:     schema.TypeInt,
-																			Optional: true,
-																			// 256 MiB
-																			Default: 268435456,
-																			// 64 MiB
-																			ValidateFunc: validation.IntAtLeast(67108864),
-																		},
-																		"compression": {
-																			Type:     schema.TypeString,
-																			Optional: true,
-																			Default:  firehose.ParquetCompressionSnappy,
-																			ValidateFunc: validation.StringInSlice([]string{
-																				firehose.ParquetCompressionGzip,
-																				firehose.ParquetCompressionSnappy,
-																				firehose.ParquetCompressionUncompressed,
-																			}, false),
-																		},
-																		"enable_dictionary_compression": {
-																			Type:     schema.TypeBool,
-																			Optional: true,
-																			Default:  false,
-																		},
-																		"max_padding_bytes": {
-																			Type:     schema.TypeInt,
-																			Optional: true,
-																			Default:  0,
-																		},
-																		"page_size_bytes": {
-																			Type:     schema.TypeInt,
-																			Optional: true,
-																			// 1 MiB
-																			Default: 1048576,
-																			// 64 KiB
-																			ValidateFunc: validation.IntAtLeast(65536),
-																		},
-																		"writer_version": {
-																			Type:     schema.TypeString,
-																			Optional: true,
-																			Default:  firehose.ParquetWriterVersionV1,
-																			ValidateFunc: validation.StringInSlice([]string{
-																				firehose.ParquetWriterVersionV1,
-																				firehose.ParquetWriterVersionV2,
-																			}, false),
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-									"schema_configuration": {
-										Type:     schema.TypeList,
-										Required: true,
-										MaxItems: 1,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"catalog_id": {
-													Type:     schema.TypeString,
-													Optional: true,
-													Computed: true,
-												},
-												"database_name": {
-													Type:     schema.TypeString,
-													Required: true,
-												},
-												"region": {
-													Type:     schema.TypeString,
-													Optional: true,
-													Computed: true,
-												},
-												"role_arn": {
-													Type:     schema.TypeString,
-													Required: true,
-												},
-												"table_name": {
-													Type:     schema.TypeString,
-													Required: true,
-												},
-												"version_id": {
-													Type:     schema.TypeString,
-													Optional: true,
-													Default:  "LATEST",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
+						// 						"data_format_conversion_configuration": {
+						// 							Type:     schema.TypeList,
+						// 							Optional: true,
+						// 							MaxItems: 1,
+						// 							Elem: &schema.Resource{
+						// 								Schema: map[string]*schema.Schema{
+						// 									"enabled": {
+						// 										Type:     schema.TypeBool,
+						// 										Optional: true,
+						// 										Default:  true,
+						// 									},
+						// 									"input_format_configuration": {
+						// 										Type:     schema.TypeList,
+						// 										Required: true,
+						// 										MaxItems: 1,
+						// 										Elem: &schema.Resource{
+						// 											Schema: map[string]*schema.Schema{
+						// 												"deserializer": {
+						// 													Type:     schema.TypeList,
+						// 													Required: true,
+						// 													MaxItems: 1,
+						// 													Elem: &schema.Resource{
+						// 														Schema: map[string]*schema.Schema{
+						// 															"hive_json_ser_de": {
+						// 																Type:          schema.TypeList,
+						// 																Optional:      true,
+						// 																MaxItems:      1,
+						// 																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.input_format_configuration.0.deserializer.0.open_x_json_ser_de"},
+						// 																Elem: &schema.Resource{
+						// 																	Schema: map[string]*schema.Schema{
+						// 																		"timestamp_formats": {
+						// 																			Type:     schema.TypeList,
+						// 																			Optional: true,
+						// 																			Elem:     &schema.Schema{Type: schema.TypeString},
+						// 																		},
+						// 																	},
+						// 																},
+						// 															},
+						// 															"open_x_json_ser_de": {
+						// 																Type:          schema.TypeList,
+						// 																Optional:      true,
+						// 																MaxItems:      1,
+						// 																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.input_format_configuration.0.deserializer.0.hive_json_ser_de"},
+						// 																Elem: &schema.Resource{
+						// 																	Schema: map[string]*schema.Schema{
+						// 																		"case_insensitive": {
+						// 																			Type:     schema.TypeBool,
+						// 																			Optional: true,
+						// 																			Default:  true,
+						// 																		},
+						// 																		"column_to_json_key_mappings": {
+						// 																			Type:     schema.TypeMap,
+						// 																			Optional: true,
+						// 																			Elem:     &schema.Schema{Type: schema.TypeString},
+						// 																		},
+						// 																		"convert_dots_in_json_keys_to_underscores": {
+						// 																			Type:     schema.TypeBool,
+						// 																			Optional: true,
+						// 																			Default:  false,
+						// 																		},
+						// 																	},
+						// 																},
+						// 															},
+						// 														},
+						// 													},
+						// 												},
+						// 											},
+						// 										},
+						// 									},
+						// 									"output_format_configuration": {
+						// 										Type:     schema.TypeList,
+						// 										Required: true,
+						// 										MaxItems: 1,
+						// 										Elem: &schema.Resource{
+						// 											Schema: map[string]*schema.Schema{
+						// 												"serializer": {
+						// 													Type:     schema.TypeList,
+						// 													Required: true,
+						// 													MaxItems: 1,
+						// 													Elem: &schema.Resource{
+						// 														Schema: map[string]*schema.Schema{
+						// 															"orc_ser_de": {
+						// 																Type:          schema.TypeList,
+						// 																Optional:      true,
+						// 																MaxItems:      1,
+						// 																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.output_format_configuration.0.serializer.0.parquet_ser_de"},
+						// 																Elem: &schema.Resource{
+						// 																	Schema: map[string]*schema.Schema{
+						// 																		"block_size_bytes": {
+						// 																			Type:     schema.TypeInt,
+						// 																			Optional: true,
+						// 																			// 256 MiB
+						// 																			Default: 268435456,
+						// 																			// 64 MiB
+						// 																			ValidateFunc: validation.IntAtLeast(67108864),
+						// 																		},
+						// 																		"bloom_filter_columns": {
+						// 																			Type:     schema.TypeList,
+						// 																			Optional: true,
+						// 																			Elem:     &schema.Schema{Type: schema.TypeString},
+						// 																		},
+						// 																		"bloom_filter_false_positive_probability": {
+						// 																			Type:     schema.TypeFloat,
+						// 																			Optional: true,
+						// 																			Default:  0.05,
+						// 																		},
+						// 																		"compression": {
+						// 																			Type:     schema.TypeString,
+						// 																			Optional: true,
+						// 																			Default:  firehose.OrcCompressionSnappy,
+						// 																			ValidateFunc: validation.StringInSlice([]string{
+						// 																				firehose.OrcCompressionNone,
+						// 																				firehose.OrcCompressionSnappy,
+						// 																				firehose.OrcCompressionZlib,
+						// 																			}, false),
+						// 																		},
+						// 																		"dictionary_key_threshold": {
+						// 																			Type:     schema.TypeFloat,
+						// 																			Optional: true,
+						// 																			Default:  0.0,
+						// 																		},
+						// 																		"enable_padding": {
+						// 																			Type:     schema.TypeBool,
+						// 																			Optional: true,
+						// 																			Default:  false,
+						// 																		},
+						// 																		"format_version": {
+						// 																			Type:     schema.TypeString,
+						// 																			Optional: true,
+						// 																			Default:  firehose.OrcFormatVersionV012,
+						// 																			ValidateFunc: validation.StringInSlice([]string{
+						// 																				firehose.OrcFormatVersionV011,
+						// 																				firehose.OrcFormatVersionV012,
+						// 																			}, false),
+						// 																		},
+						// 																		"padding_tolerance": {
+						// 																			Type:     schema.TypeFloat,
+						// 																			Optional: true,
+						// 																			Default:  0.05,
+						// 																		},
+						// 																		"row_index_stride": {
+						// 																			Type:         schema.TypeInt,
+						// 																			Optional:     true,
+						// 																			Default:      10000,
+						// 																			ValidateFunc: validation.IntAtLeast(1000),
+						// 																		},
+						// 																		"stripe_size_bytes": {
+						// 																			Type:     schema.TypeInt,
+						// 																			Optional: true,
+						// 																			// 64 MiB
+						// 																			Default: 67108864,
+						// 																			// 8 MiB
+						// 																			ValidateFunc: validation.IntAtLeast(8388608),
+						// 																		},
+						// 																	},
+						// 																},
+						// 															},
+						// 															"parquet_ser_de": {
+						// 																Type:          schema.TypeList,
+						// 																Optional:      true,
+						// 																MaxItems:      1,
+						// 																ConflictsWith: []string{"extended_s3_configuration.0.data_format_conversion_configuration.0.output_format_configuration.0.serializer.0.orc_ser_de"},
+						// 																Elem: &schema.Resource{
+						// 																	Schema: map[string]*schema.Schema{
+						// 																		"block_size_bytes": {
+						// 																			Type:     schema.TypeInt,
+						// 																			Optional: true,
+						// 																			// 256 MiB
+						// 																			Default: 268435456,
+						// 																			// 64 MiB
+						// 																			ValidateFunc: validation.IntAtLeast(67108864),
+						// 																		},
+						// 																		"compression": {
+						// 																			Type:     schema.TypeString,
+						// 																			Optional: true,
+						// 																			Default:  firehose.ParquetCompressionSnappy,
+						// 																			ValidateFunc: validation.StringInSlice([]string{
+						// 																				firehose.ParquetCompressionGzip,
+						// 																				firehose.ParquetCompressionSnappy,
+						// 																				firehose.ParquetCompressionUncompressed,
+						// 																			}, false),
+						// 																		},
+						// 																		"enable_dictionary_compression": {
+						// 																			Type:     schema.TypeBool,
+						// 																			Optional: true,
+						// 																			Default:  false,
+						// 																		},
+						// 																		"max_padding_bytes": {
+						// 																			Type:     schema.TypeInt,
+						// 																			Optional: true,
+						// 																			Default:  0,
+						// 																		},
+						// 																		"page_size_bytes": {
+						// 																			Type:     schema.TypeInt,
+						// 																			Optional: true,
+						// 																			// 1 MiB
+						// 																			Default: 1048576,
+						// 																			// 64 KiB
+						// 																			ValidateFunc: validation.IntAtLeast(65536),
+						// 																		},
+						// 																		"writer_version": {
+						// 																			Type:     schema.TypeString,
+						// 																			Optional: true,
+						// 																			Default:  firehose.ParquetWriterVersionV1,
+						// 																			ValidateFunc: validation.StringInSlice([]string{
+						// 																				firehose.ParquetWriterVersionV1,
+						// 																				firehose.ParquetWriterVersionV2,
+						// 																			}, false),
+						// 																		},
+						// 																	},
+						// 																},
+						// 															},
+						// 														},
+						// 													},
+						// 												},
+						// 											},
+						// 										},
+						// 									},
+						// 									"schema_configuration": {
+						// 										Type:     schema.TypeList,
+						// 										Required: true,
+						// 										MaxItems: 1,
+						// 										Elem: &schema.Resource{
+						// 											Schema: map[string]*schema.Schema{
+						// 												"catalog_id": {
+						// 													Type:     schema.TypeString,
+						// 													Optional: true,
+						// 													Computed: true,
+						// 												},
+						// 												"database_name": {
+						// 													Type:     schema.TypeString,
+						// 													Required: true,
+						// 												},
+						// 												"region": {
+						// 													Type:     schema.TypeString,
+						// 													Optional: true,
+						// 													Computed: true,
+						// 												},
+						// 												"role_arn": {
+						// 													Type:     schema.TypeString,
+						// 													Required: true,
+						// 												},
+						// 												"table_name": {
+						// 													Type:     schema.TypeString,
+						// 													Required: true,
+						// 												},
+						// 												"version_id": {
+						// 													Type:     schema.TypeString,
+						// 													Optional: true,
+						// 													Default:  "LATEST",
+						// 												},
+						// 											},
+						// 										},
+						// 									},
+						// 								},
+						// 							},
+						// 						},
 
 						"error_output_prefix": {
 							Type:     schema.TypeString,
@@ -1437,10 +1437,10 @@ func createExtendedS3Config(d *schema.ResourceData) *firehose.ExtendedS3Destinat
 			IntervalInSeconds: aws.Int64(int64(s3["buffer_interval"].(int))),
 			SizeInMBs:         aws.Int64(int64(s3["buffer_size"].(int))),
 		},
-		Prefix:                            extractPrefixConfiguration(s3),
-		CompressionFormat:                 aws.String(s3["compression_format"].(string)),
-		DataFormatConversionConfiguration: expandFirehoseDataFormatConversionConfiguration(s3["data_format_conversion_configuration"].([]interface{})),
-		EncryptionConfiguration:           extractEncryptionConfiguration(s3),
+		Prefix:            extractPrefixConfiguration(s3),
+		CompressionFormat: aws.String(s3["compression_format"].(string)),
+		// DataFormatConversionConfiguration: expandFirehoseDataFormatConversionConfiguration(s3["data_format_conversion_configuration"].([]interface{})),
+		EncryptionConfiguration: extractEncryptionConfiguration(s3),
 	}
 
 	if _, ok := s3["processing_configuration"]; ok {
@@ -1524,12 +1524,12 @@ func updateExtendedS3Config(d *schema.ResourceData) *firehose.ExtendedS3Destinat
 			IntervalInSeconds: aws.Int64((int64)(s3["buffer_interval"].(int))),
 			SizeInMBs:         aws.Int64((int64)(s3["buffer_size"].(int))),
 		},
-		Prefix:                            extractPrefixConfiguration(s3),
-		CompressionFormat:                 aws.String(s3["compression_format"].(string)),
-		EncryptionConfiguration:           extractEncryptionConfiguration(s3),
-		DataFormatConversionConfiguration: expandFirehoseDataFormatConversionConfiguration(s3["data_format_conversion_configuration"].([]interface{})),
-		CloudWatchLoggingOptions:          extractCloudWatchLoggingConfiguration(s3),
-		ProcessingConfiguration:           extractProcessingConfiguration(s3),
+		Prefix:                  extractPrefixConfiguration(s3),
+		CompressionFormat:       aws.String(s3["compression_format"].(string)),
+		EncryptionConfiguration: extractEncryptionConfiguration(s3),
+		// DataFormatConversionConfiguration: expandFirehoseDataFormatConversionConfiguration(s3["data_format_conversion_configuration"].([]interface{})),
+		CloudWatchLoggingOptions: extractCloudWatchLoggingConfiguration(s3),
+		ProcessingConfiguration:  extractProcessingConfiguration(s3),
 	}
 
 	if _, ok := s3["cloudwatch_logging_options"]; ok {
